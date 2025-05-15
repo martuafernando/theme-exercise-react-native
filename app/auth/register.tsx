@@ -9,40 +9,21 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 
-export default function Login() {
+export default function Register() {
+	const [fullName, setFullName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 
-	const handleSignIn = async () => {
-		// TODO: REMOVE THIS
-		// if (!email || !password) {
-		// 	setError("Please fill in all fields");
-		// 	return;
-		// }
-
-		setLoading(true);
-		setError("");
-
-		try {
-			// const response = await api.post("/api/auth/login", {
-			//   email,
-			//   password,
-			// });
-			// await setAccessToken(response.data.accessToken);
-			router.replace("/main");
-		} catch (error) {
-			setError("Login failed. Please try again.");
-			console.error("Login error", error);
-		} finally {
-			setLoading(false);
-		}
+	const handleSignUp = async () => {
+		router.replace("/auth/login");
 	};
 
-	const handleSignUp = () => {
-		router.push("/auth/register");
+	const handleSignIn = () => {
+		// Navigasi ke halaman signup
+		router.push("/auth/login");
 	};
 
 	return (
@@ -52,6 +33,14 @@ export default function Login() {
 			</Text>
 
 			<View className="space-y-4">
+				<TextInput
+					className="w-full h-14 mb-4 px-4 bg-gray-50 rounded-xl text-base text-gray-900"
+					placeholder="Your Full Name"
+					placeholderTextColor="#9ca3af"
+					value={fullName}
+					onChangeText={setFullName}
+				/>
+
 				<TextInput
 					className="w-full h-14 mb-4 px-4 bg-gray-50 rounded-xl text-base text-gray-900"
 					placeholder="Your Email"
@@ -83,23 +72,23 @@ export default function Login() {
 
 				<TouchableOpacity
 					className="w-full h-14 bg-emerald-900 rounded-xl items-center justify-center"
-					onPress={handleSignIn}
+					onPress={handleSignUp}
 					disabled={loading}
 				>
 					{loading ? (
 						<ActivityIndicator color="#fff" />
 					) : (
 						<Text className="text-white font-semibold text-[16px]">
-							Sign In
+							Register
 						</Text>
 					)}
 				</TouchableOpacity>
 
 				<TouchableOpacity
 					className="w-full rounded-xl items-center justify-center mt-6"
-					onPress={handleSignUp}
+					onPress={handleSignIn}
 				>
-					<Text className="font-bold text-emerald-900">Register</Text>
+					<Text className="font-bold text-emerald-900">Sign In</Text>
 				</TouchableOpacity>
 			</View>
 		</View>
