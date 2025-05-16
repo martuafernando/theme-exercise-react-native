@@ -8,6 +8,9 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import Toast from "react-native-toast-message";
+import api from "lib/api";
+import { AxiosError } from "axios";
 
 export default function Register() {
 	const [fullName, setFullName] = useState("");
@@ -18,11 +21,35 @@ export default function Register() {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const handleSignUp = async () => {
-		router.replace("/auth/login");
-	};
+		setLoading(true);
+		setError("");
+
+		try {
+			const register = await api.post("/api/auth/register", {
+				name: fullName,
+				email,
+				password,
+			});
+
+			Toast.show({
+				type: "success",
+				text1: register.data.message,
+				text2: register.data.user.name,
+			});
+
+			router.back();
+		} catch (e) {
+			if (e instanceof AxiosError) {
+				return setError(e.response?.data.message ?? e.message);
+			}
+
+			return setError((e as Error).message);
+		} finally {
+			setLoading(false);
+		}
+	}; 
 
 	const handleSignIn = () => {
-		// Navigasi ke halaman signup
 		router.push("/auth/login");
 	};
 
@@ -39,6 +66,7 @@ export default function Register() {
 					placeholderTextColor="#9ca3af"
 					value={fullName}
 					onChangeText={setFullName}
+					editable={!loading}
 				/>
 
 				<TextInput
@@ -47,6 +75,7 @@ export default function Register() {
 					placeholderTextColor="#9ca3af"
 					value={email}
 					onChangeText={setEmail}
+					editable={!loading}
 				/>
 
 				<View className="flex-row items-center">
@@ -57,6 +86,7 @@ export default function Register() {
 						value={password}
 						onChangeText={setPassword}
 						secureTextEntry={!showPassword}
+						editable={!loading}
 					/>
 					<TouchableOpacity
 						onPress={() => setShowPassword(!showPassword)}

@@ -8,6 +8,8 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import api from "lib/api";
+import { setAccessToken } from "lib/auth";
 
 export default function Login() {
 	const [email, setEmail] = useState("");
@@ -17,21 +19,21 @@ export default function Login() {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const handleSignIn = async () => {
-		// TODO: REMOVE THIS
-		// if (!email || !password) {
-		// 	setError("Please fill in all fields");
-		// 	return;
-		// }
+		if (!email || !password) {
+			setError("Please fill in all fields");
+			return;
+		}
 
 		setLoading(true);
 		setError("");
 
 		try {
-			// const response = await api.post("/api/auth/login", {
-			//   email,
-			//   password,
-			// });
-			// await setAccessToken(response.data.accessToken);
+			const response = await api.post("/api/auth/login", {
+				email,
+				password,
+			});
+
+			await setAccessToken(response.data.accessToken);
 			router.replace("/main");
 		} catch (error) {
 			setError("Login failed. Please try again.");
@@ -58,6 +60,7 @@ export default function Login() {
 					placeholderTextColor="#9ca3af"
 					value={email}
 					onChangeText={setEmail}
+					editable={!loading}
 				/>
 
 				<View className="flex-row items-center">
@@ -68,6 +71,7 @@ export default function Login() {
 						value={password}
 						onChangeText={setPassword}
 						secureTextEntry={!showPassword}
+						editable={!loading}
 					/>
 					<TouchableOpacity
 						onPress={() => setShowPassword(!showPassword)}
